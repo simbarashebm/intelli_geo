@@ -36,7 +36,10 @@ class Processor(QObject):
         self.llmProvider, self.llmName = llmID.split("::")
         _, apiKey = dataloader.fetchAPIKey(self.llmID)
         if self.llmProvider == "OpenAI":
-            self.llm = ChatOpenAI(model=self.llmName, openai_api_key=apiKey, temperature=0)
+            # GPT-6 Sol/Luna only support tool calling over Chat Completions with reasoning set to "none",
+            # which is also the only mode where temperature is accepted
+            gpt6Args = {"reasoning_effort": "none", "use_responses_api": False} if self.llmName.startswith("gpt-6") else {}
+            self.llm = ChatOpenAI(model=self.llmName, openai_api_key=apiKey, temperature=0, **gpt6Args)
         elif self.llmProvider == "Cohere":
             self.llm = ChatCohere(model=self.llmName, cohere_api_key=apiKey, temperature=0)
         elif self.llmProvider == "DeepSeek":

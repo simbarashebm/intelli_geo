@@ -14,7 +14,7 @@ import os
 import requests
 import psutil
 
-from qgis.core import Qgis
+from qgis.core import Qgis, QgsSettings
 from qgis.PyQt.QtWidgets import (
     QApplication,
     QHBoxLayout,
@@ -32,6 +32,19 @@ import sys
 import os
 import platform
 from . import log_manager
+
+TELEMETRY_SETTING = "IntelliGeo/telemetryEnabled"
+
+
+def getTelemetryEnabled() -> bool:
+    """
+    Whether the user has opted in to sharing conversations with the IntelliGeo backend. Off by default.
+    """
+    return QgsSettings().value(TELEMETRY_SETTING, False, type=bool)
+
+
+def setTelemetryEnabled(enabled: bool) -> None:
+    QgsSettings().setValue(TELEMETRY_SETTING, enabled)
 
 
 def generateUniqueID():

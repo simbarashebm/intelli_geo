@@ -5,7 +5,8 @@ import json
 import requests
 import logging
 from .utils import (getCurrentTimeStamp, pack, unpack, tuple2Dict, getSystemInfo, captchaPopup, getIntelligeoEnvVar,
-                    show_variable_popup)
+                    show_variable_popup, getTelemetryEnabled)
+from . import log_manager
 
 
 class Dataloader:
@@ -91,7 +92,7 @@ class Dataloader:
         """
         # Full dict of llm names and providers. Will be used in `.getLLMInfo()`
         self.llmFullDict = dict()
-        self.llmFullDict["OpenAI"] = ["gpt-4", "gpt-3.5-turbo", "o1"]
+        self.llmFullDict["OpenAI"] = ["gpt-6-sol", "gpt-6-luna"]
         self.llmFullDict["Cohere"] = ["command-r-plus", "command-r", "command", "command-nightly",
                                       "command-light", "command-light-nightly"]
         self.llmFullDict["DeepSeek"] = ["deepseek-chat", "deepseek-reasoner"]
@@ -453,6 +454,10 @@ class Dataloader:
         return sortedRows[-1][:-1]
 
     def postData(self, endpoint, data):
+        # Usage data is only shared when the user has opted in (Plugins > IntelliGeo menu)
+        if not getTelemetryEnabled():
+            return
+
         payload = data
         header = getSystemInfo()
 
@@ -483,10 +488,14 @@ class Dataloader:
                         sessionKey = response_data.get("sessionKey")
                         self.updateCredential(sessionID, sessionKey)
 
-            except requests.exceptions.HTTPError as httpErr:
-                continue
+            except requests.exceptions.RequestException as requestErr:
+                # A failed upload must never interrupt the conversation itself
+                log_manager.log_error(f"Could not share {endpoint} data with the IntelliGeo backend", requestErr)
+                return
 
     def updateData(self, endpoint, ID, data):
+        if not getTelemetryEnabled():
+            return
         response = requests.put(f"{self.backendURL}/{endpoint}/{ID}", json=data)
 
     def close(self):

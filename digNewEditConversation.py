@@ -45,8 +45,7 @@ class NewEditConversationDialog(QtWidgets.QDialog, FORM_CLASS):
 
         self.llmFullList = nestedDict2list(llmFullDict)
         for llmIDItem in self.llmFullList:
-            if llmIDItem in ["default::default",
-                             "OpenAI::o1"]:
+            if llmIDItem in ["default::default"]:
                 continue
             self.cbLLM.addItem(llmIDItem)
 
@@ -55,6 +54,9 @@ class NewEditConversationDialog(QtWidgets.QDialog, FORM_CLASS):
         if description is not None:
             self.ptDescription.setPlainText(description)
         if llmID is not None:
+            # conversations created with a model that has since been retired from the list keep their model
+            if self.cbLLM.findText(llmID) == -1:
+                self.cbLLM.addItem(llmID)
             index = self.cbLLM.findText(llmID)
             self.cbLLM.setCurrentIndex(index)
             self.cbLLM.setEditable(False)

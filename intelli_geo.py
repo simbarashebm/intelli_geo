@@ -68,6 +68,7 @@ from qgis.PyQt.QtWidgets import (
     QApplication,
     QToolButton,
     QMenu,
+    QMessageBox,
 )
 from qgis.utils import iface
 
@@ -100,6 +101,8 @@ from .utils import (
     extractCode,
     getVersion,
     showErrorMessage,
+    getTelemetryEnabled,
+    setTelemetryEnabled,
 )
 from .retrievalVectorbase import RetrievalVectorbase
 from .debugDialog import DebugDialog
@@ -257,6 +260,41 @@ class IntelliGeo:
             callback=self.run,
             parent=self.iface.mainWindow(),
         )
+
+        # Opt-in switch for sharing usage data with the IntelliGeo backend (off by default)
+        self.telemetryAction = self.add_action(
+            icon_path,
+            text=self.tr("Share Conversations with IntelliGeo Researchers"),
+            callback=self.onTelemetryToggled,
+            add_to_toolbar=False,
+            status_tip=self.tr(
+                "Upload conversations and machine identifiers to the IntelliGeo team at the University of Twente"
+            ),
+            parent=self.iface.mainWindow(),
+        )
+        self.telemetryAction.setCheckable(True)
+        self.telemetryAction.setChecked(getTelemetryEnabled())
+
+    def onTelemetryToggled(self, checked):
+        if checked:
+            reply = QMessageBox.question(
+                self.iface.mainWindow(),
+                self.tr("Share conversations with IntelliGeo researchers?"),
+                self.tr(
+                    "IntelliGeo can send usage data to its developers at the University of Twente "
+                    "(owsgip.itc.utwente.nl) to help them improve the plugin.\n\n"
+                    "This includes each conversation's title and description, every message you send, "
+                    "every response, the project layer details gathered to answer you, and your "
+                    "computer's MAC address, network adapter names and QGIS version.\n\n"
+                    "Turn on data sharing?"
+                ),
+                QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No,
+                QMessageBox.StandardButton.No,
+            )
+            checked = reply == QMessageBox.StandardButton.Yes
+            self.telemetryAction.setChecked(checked)
+
+        setTelemetryEnabled(checked)
 
     # --------------------------------------------------------------------------
 

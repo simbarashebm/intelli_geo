@@ -1,4 +1,4 @@
-from langchain.tools import tool
+from langchain_core.tools import tool
 # from typing import *
 import requests
 # from bs4 import BeautifulSoup
@@ -43,7 +43,7 @@ def activateConsole(code: str, run: bool) -> None:
     consoleWidget = console.findChild(QtWidgets.QPlainTextEdit)
     consoleWidget.insertPlainText(code)
     consoleWidget.setFocus()
-    consoleWidget.moveCursor(QtGui.QTextCursor.End)
+    consoleWidget.moveCursor(QtGui.QTextCursor.MoveOperation.End)
     consoleWidget.ensureCursorVisible()
     consoleWidget.setFocus()
     QtWidgets.QApplication.processEvents()

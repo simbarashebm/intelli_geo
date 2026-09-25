@@ -1,5 +1,5 @@
-from PyQt5.QtWidgets import QTextEdit
-from PyQt5.QtCore import pyqtSignal, Qt
+from qgis.PyQt.QtWidgets import QTextEdit
+from qgis.PyQt.QtCore import pyqtSignal, Qt
 
 class MessageEdit(QTextEdit):
     enterPressed = pyqtSignal()
@@ -8,7 +8,7 @@ class MessageEdit(QTextEdit):
         super().__init__(parent)
 
     def keyPressEvent(self, event):
-        if event.key() == Qt.Key_Return or event.key() == Qt.Key_Enter:
+        if event.key() == Qt.Key.Key_Return or event.key() == Qt.Key.Key_Enter:
             self.enterPressed.emit()
         else:
             super().keyPressEvent(event)

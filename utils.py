@@ -15,7 +15,7 @@ import requests
 import psutil
 
 from qgis.core import Qgis
-from PyQt5.QtWidgets import (
+from qgis.PyQt.QtWidgets import (
     QApplication,
     QHBoxLayout,
     QLabel,
@@ -424,10 +424,10 @@ def captchaPopup(captcha_dict):
     cancel_button.clicked.connect(on_cancel)
 
     # Execute the dialog and wait for the user response
-    result = dialog.exec_()
+    result = dialog.exec()
 
     # Return the input value or None depending on the user action, or nothing if no button was clicked
-    if result == QDialog.Accepted and button_clicked:
+    if result == QDialog.DialogCode.Accepted and button_clicked:
         return user_answer
     return None
 
@@ -581,10 +581,10 @@ def showErrorMessage(error):
     dialog.setLayout(mainLayout)
 
     # Show the dialog
-    dialog.exec_()
+    dialog.exec()
 
     if not QApplication.instance():
-        app.exec_()  # Start the application loop if not already running
+        app.exec()  # Start the application loop if not already running
 
 
 def show_variable_popup(variable):
@@ -635,7 +635,7 @@ def show_variable_popup(variable):
     dialog.setLayout(main_layout)
 
     # Show the dialog
-    dialog.exec_()
+    dialog.exec()
 
     if not QApplication.instance():
-        app.exec_()  # Start the application loop if not already running
+        app.exec()  # Start the application loop if not already running

@@ -1,4 +1,4 @@
-from qgis.core import QgsProject, QgsMapLayer, Qgis
+from qgis.core import QgsProject, Qgis
 
 
 class QgisEnvironment():
@@ -23,7 +23,7 @@ class QgisEnvironment():
             layerName = layer.name()
             envInfo += f'Layer Name: {layerName};\n'
             envInfo += f'    Layer Type: {str(layer.type())};\n'
-            if layer.type() == QgsMapLayer.VectorLayer:
+            if layer.type() == Qgis.LayerType.Vector:
                 # get EPSG
                 crs = layer.crs()
                 epsgCode = crs.authid().split(':')[-1]
@@ -39,7 +39,7 @@ class QgisEnvironment():
                 geometryType = str(layer.geometryType())
                 envInfo += f'    Geometry Type: {geometryType};\n'
 
-            elif layer.type() == QgsMapLayer.RasterLayer:
+            elif layer.type() == Qgis.LayerType.Raster:
                 # get EPSG
                 crs = layer.crs()
                 epsgCode = crs.authid().split(':')[-1]

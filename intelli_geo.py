@@ -38,9 +38,9 @@ from .packageManager import PackageManager
 requiredModules = [
     "langchain_cohere",
     "langchain_openai",
-    "langchain",
     "langchain_deepseek",
     "langchain_groq",
+    "langchain_core",
     "requests",
     "psutil",
     #"bs4",
@@ -312,7 +312,7 @@ class IntelliGeo:
 
             # show the dockwidget
             # TODO: fix to allow choice of dock location
-            self.iface.addDockWidget(Qt.RightDockWidgetArea, self.dockwidget)
+            self.iface.addDockWidget(Qt.DockWidgetArea.RightDockWidgetArea, self.dockwidget)
             self.dockwidget.show()
 
             self.dataloader.connect()
@@ -429,7 +429,7 @@ class IntelliGeo:
                 self.dataloader.llmFullDict, self.dataloader.fetchAllConfig()
             )
             self.editdialog.show()
-            if self.editdialog.exec_() == QDialog.Accepted:
+            if self.editdialog.exec() == QDialog.DialogCode.Accepted:
                 # The dialog was accepted, handle the data if needed
                 title, description, llmID, endpoint, apiKey = (
                     self.editdialog.onUpdateMetadata()
@@ -542,7 +542,7 @@ class IntelliGeo:
             )
             self.editdialog.show()
 
-            if self.editdialog.exec_() == QDialog.Accepted:
+            if self.editdialog.exec() == QDialog.DialogCode.Accepted:
                 # Conversation: Dialog was accepted, update conversation meta-information
                 (
                     editConversation.title,
@@ -646,8 +646,10 @@ class IntelliGeo:
         pythonConsole = consoleWidget.findChild(console.console.PythonConsoleWidget)
         editorWidget = pythonConsole.findChild(console.console_editor.Editor)
 
-        if not editorWidget or not editorWidget.isVisible:
-            pythonConsole.showEditorButton.trigger()
+        if not editorWidget or not editorWidget.isVisible():
+            # QGIS 3.36+ renamed 'showEditorButton' to 'show_editor_action'
+            showEditorAction = getattr(pythonConsole, "show_editor_action", None) or pythonConsole.showEditorButton
+            showEditorAction.setChecked(True)
 
         shellOutputWidget = pythonConsole.findChild(
             console.console_output.ShellOutputScintilla
@@ -676,7 +678,7 @@ class IntelliGeo:
         pythonConsole = consoleWidget.findChild(console.console.PythonConsoleWidget)
         editorWidget = pythonConsole.findChild(console.console_editor.Editor)
 
-        if not editorWidget or not editorWidget.isVisible:
+        if not editorWidget or not editorWidget.isVisible():
             self.consoleTracker.stop()
             return
 
@@ -704,10 +706,10 @@ class IntelliGeo:
 
     def activateDebugDialog(self, logMessage, executedCode):
         dialog = DebugDialog()
-        result = dialog.exec_()
+        result = dialog.exec()
         self.consoleTracker.stop()
 
-        if result != QDialog.Accepted:
+        if result != QDialog.DialogCode.Accepted:
             return
         self.liveConversation.llmReflection.connect(self.onDebugReceived)
         self.liveConversation.updateReflection(logMessage, executedCode, "code")
@@ -778,13 +780,13 @@ class IntelliGeo:
                         menu = child.menu()
 
                         downEvent = QKeyEvent(
-                            QKeyEvent.KeyPress, Qt.Key_Down, Qt.NoModifier
+                            QKeyEvent.Type.KeyPress, Qt.Key.Key_Down, Qt.KeyboardModifier.NoModifier
                         )
                         QApplication.postEvent(menu, downEvent)
 
                         # Simulate pressing "Enter" key
                         enterEvent = QKeyEvent(
-                            QKeyEvent.KeyPress, Qt.Key_Return, Qt.NoModifier
+                            QKeyEvent.Type.KeyPress, Qt.Key.Key_Return, Qt.KeyboardModifier.NoModifier
                         )
                         QApplication.postEvent(menu, enterEvent)
 

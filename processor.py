@@ -6,12 +6,10 @@ import asyncio
 
 from qgis.PyQt.QtCore import QThreadPool, pyqtSignal, QObject
 
-from langchain.prompts import ChatPromptTemplate
-from langchain.schema.output_parser import StrOutputParser
-from langchain.agents import AgentExecutor, create_tool_calling_agent
+from langchain_core.prompts import ChatPromptTemplate
+from langchain_core.output_parsers import StrOutputParser
 from langchain_core.runnables import RunnableLambda
 from langchain_core.messages import HumanMessage, ToolMessage, AIMessage
-from langchain_community.vectorstores import FAISS
 from langchain_cohere import ChatCohere
 from langchain_openai import ChatOpenAI
 from langchain_deepseek import ChatDeepSeek

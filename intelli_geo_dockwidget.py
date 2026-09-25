@@ -131,7 +131,7 @@ class IntelliGeoDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
         self.scrollAreaLayout = QVBoxLayout()
         self.scrollAreaWidget = QWidget()
         self.saConversationCard.setWidget(self.scrollAreaWidget)
-        self.scrollAreaWidget.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
+        self.scrollAreaWidget.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
 
         metaTable = dataloader.selectConversationInfo()
         metaTable.sort(key=lambda info: datetime.strptime(info['modified'], "%m %d %Y %H:%M:%S"))
@@ -177,14 +177,14 @@ class IntelliGeoDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
         desLabel = QLabel(highlight(description))
         desLabel.setWordWrap(True)
 
-        verticalSpacer = QSpacerItem(0, 20, QSizePolicy.Minimum, QSizePolicy.Expanding)
+        verticalSpacer = QSpacerItem(0, 20, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding)
 
         metadata = f"Created: {created} | LLM: {llmID} \n Messages: {messageCount} | Workflow: {workflowCount} "
         metadataLabel = QLabel(metadata)
-        metadataLabel.setAlignment(Qt.AlignRight)
+        metadataLabel.setAlignment(Qt.AlignmentFlag.AlignRight)
 
         horizontalLayout = QHBoxLayout()
-        spacer = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+        spacer = QSpacerItem(40, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
         pbEdit = QPushButton("Edit")
         pbEdit.setStyleSheet("""
             QPushButton {
@@ -253,7 +253,7 @@ class IntelliGeoDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
         self.cbModel.clear()
         # get updated log
         interactionHistory = conversation.fetch()
-        fontColor = setFontColor(self.txHistory.palette().color(QPalette.Base))
+        fontColor = setFontColor(self.txHistory.palette().color(QPalette.ColorRole.Base))
         for interaction in interactionHistory:
             messageDict = pack(interaction, "interaction")
             if messageDict["typeMessage"] == "input":
@@ -358,27 +358,27 @@ class IntelliGeoDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
 
 
     def eventFilter(self, QTObject, event):
-        if event.type() == QEvent.KeyPress:
+        if event.type() == QEvent.Type.KeyPress:
             if QTObject is self.ptMessage and self.ptMessage.hasFocus():
-                if event.key() == Qt.Key_Return:
+                if event.key() == Qt.Key.Key_Return:
                     self.enterPressed.emit(self.ptMessage.toPlainText())
                     return True
 
             if QTObject is self.ptSearchConversationCard and self.ptSearchConversationCard.hasFocus():
-                if event.key() == Qt.Key_Return:
+                if event.key() == Qt.Key.Key_Return:
                     self.searchPressed.emit(self.ptSearchConversationCard.toPlainText())
                     return True
                 elif self.pbSearchConversationCard.text() == "Cancel":
                     self.switchClearMode.emit(self.ptSearchConversationCard.toPlainText())
 
             if QTObject is self.txSearchMessage and self.txSearchMessage.hasFocus():
-                if event.key() == Qt.Key_Return:
+                if event.key() == Qt.Key.Key_Return:
                     self.searchInteractionPressed.emit()
                     return True
                 elif self.pbSearchInteraction.text() == "Cancel":
-                    if event.key() == Qt.Key_Up:
+                    if event.key() == Qt.Key.Key_Up:
                         self.searchPrevInteraction()
-                    elif event.key() == Qt.Key_Down:
+                    elif event.key() == Qt.Key.Key_Down:
                         self.searchInteractionPressed.emit()
                     else:
                         self.deactiivateSearchInteraction()
@@ -412,7 +412,7 @@ class IntelliGeoDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
         cursor.setPosition(self.searchInteractionIndex)
 
         # Move the cursor to select the found text
-        cursor.movePosition(QTextCursor.Right, QTextCursor.KeepAnchor, len(searchText))
+        cursor.movePosition(QTextCursor.MoveOperation.Right, QTextCursor.MoveMode.KeepAnchor, len(searchText))
 
         # Apply the modified cursor back to the text edit
         self.txHistory.setTextCursor(cursor)
@@ -438,7 +438,7 @@ class IntelliGeoDockWidget(QtWidgets.QDockWidget, FORM_CLASS):
         cursor.setPosition(self.searchInteractionIndex)
 
         # Move the cursor to select the found text
-        cursor.movePosition(QTextCursor.Right, QTextCursor.KeepAnchor, len(searchText))
+        cursor.movePosition(QTextCursor.MoveOperation.Right, QTextCursor.MoveMode.KeepAnchor, len(searchText))
 
         # Apply the modified cursor back to the text edit
         self.txHistory.setTextCursor(cursor)

@@ -15,15 +15,15 @@ from .utils import nestedDict2list, show_variable_popup
 class PasswordLineEdit(QLineEdit):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.setEchoMode(QLineEdit.Password)  # Start in password mode
+        self.setEchoMode(QLineEdit.EchoMode.Password)  # Start in password mode
 
     def focusInEvent(self, event):
         super().focusInEvent(event)
-        self.setEchoMode(QLineEdit.Normal)  # Show text in normal mode when focused
+        self.setEchoMode(QLineEdit.EchoMode.Normal)  # Show text in normal mode when focused
 
     def focusOutEvent(self, event):
         super().focusOutEvent(event)
-        self.setEchoMode(QLineEdit.Password)  # Hide text in password mode when not focused
+        self.setEchoMode(QLineEdit.EchoMode.Password)  # Hide text in password mode when not focused
 
 
 # Load the UI file
@@ -73,7 +73,7 @@ class NewEditConversationDialog(QtWidgets.QDialog, FORM_CLASS):
 
                 # API key input lineEdit
                 self.leAPIKey.setText(apiKey)
-                self.leAPIKey.setEchoMode(QLineEdit.Password)
+                self.leAPIKey.setEchoMode(QLineEdit.EchoMode.Password)
                 break
 
         self.pbOkay.clicked.connect(self.handleOkay)
@@ -115,12 +115,12 @@ class NewEditConversationDialog(QtWidgets.QDialog, FORM_CLASS):
 
                 # API key input lineEdit
                 self.leAPIKey.setText(apiKey)
-                self.leAPIKey.setEchoMode(QLineEdit.Password)
+                self.leAPIKey.setEchoMode(QLineEdit.EchoMode.Password)
                 break
 
     def eventFilter(self, obj, event):
-        if event.type() == QEvent.KeyPress and obj is self.ptName:
-            if event.key() == Qt.Key_Return and self.ptName.hasFocus():
+        if event.type() == QEvent.Type.KeyPress and obj is self.ptName:
+            if event.key() == Qt.Key.Key_Return and self.ptName.hasFocus():
                 self.ptDescription.setFocus()
                 return True
         return super().eventFilter(obj, event)

@@ -101,11 +101,11 @@ class PackageManager:
             f"The following modules are required but not installed:\n\n"
             f'{", ".join(self.missingDependencies)}\n\n'
             "Do you want to install them now?",
-            QMessageBox.Yes | QMessageBox.No,
-            QMessageBox.Yes,
+            QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No,
+            QMessageBox.StandardButton.Yes,
         )
 
-        if reply == QMessageBox.Yes:
+        if reply == QMessageBox.StandardButton.Yes:
             self._installDependencies()
         else:
             QMessageBox.warning(
